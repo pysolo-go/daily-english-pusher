@@ -1,7 +1,0 @@
-{
-  "name": "J.A.R.V.I.S. Holographic Interface",
-  "description": "A futuristic Augmented Reality interface featuring a holographic earth and gesture-controlled data panels.",
-  "requestFramePermissions": [
-    "camera"
-  ]
-}
