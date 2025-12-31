@@ -9,6 +9,8 @@ on:
 jobs:
   send-email:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Give permission to commit and push
     
     steps:
     - name: Checkout repository
