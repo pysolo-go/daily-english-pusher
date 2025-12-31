@@ -47,10 +47,11 @@ def send_email(subject, body_html):
 load_dotenv("/Users/solo/Desktop/work/trae.ai/ai/.env", override=True)
 
 # Configuration
-CSV_PATH = "/Users/solo/Desktop/work/trae.ai/ai/street_english_app/vocabulary.csv"
-PROGRESS_FILE = "/Users/solo/Desktop/work/trae.ai/ai/street_english_app/email_progress.json"
-BATCH_SIZE = 20
-DEBUG_PREVIEW_FILE = "/Users/solo/Desktop/work/trae.ai/ai/street_english_app/latest_email_preview.html"
+# Use relative paths for portability (GitHub Actions vs Local)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, "vocabulary.csv")
+PROGRESS_FILE = os.path.join(BASE_DIR, "email_progress.json")
+DEBUG_PREVIEW_FILE = os.path.join(BASE_DIR, "latest_email_preview.html")
 
 # Email Config
 SMTP_SERVER = os.getenv("SMTP_SERVER")
