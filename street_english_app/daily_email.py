@@ -87,8 +87,12 @@ DEBUG_PREVIEW_FILE = os.path.join(BASE_DIR, "latest_email_preview.html")
 BATCH_SIZE = 20
 
 # Email Config
-SMTP_SERVER = os.getenv("SMTP_SERVER")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 465))
+SMTP_SERVER = os.getenv("SMTP_SERVER", "")
+smtp_port_str = os.getenv("SMTP_PORT")
+if smtp_port_str and smtp_port_str.strip():
+    SMTP_PORT = int(smtp_port_str)
+else:
+    SMTP_PORT = 465 # Default
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
