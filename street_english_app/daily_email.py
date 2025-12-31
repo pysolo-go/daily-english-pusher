@@ -9,8 +9,17 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from dotenv import load_dotenv
 from openai import OpenAI
+try:
+    import resend
+except ImportError:
+    resend = None
 
 def send_email(subject, body_html):
+    # Check if we should use Resend API
+    resend_api_key = os.getenv("RESEND_API_KEY")
+    if resend_api_key and resend:
+        return send_email_via_resend(subject, body_html, resend_api_key)
+
     # Check for placeholder values or missing values
     if not all([SMTP_SERVER, SENDER_EMAIL, SENDER_PASSWORD, RECEIVER_EMAIL]) or "example.com" in SENDER_EMAIL:
         print("\n[Warning] Email configuration incomplete or using placeholders.")
@@ -41,6 +50,29 @@ def send_email(subject, body_html):
     except Exception as e:
         print(f"Failed to send email via {SMTP_SERVER}:{SMTP_PORT}. Error: {e}")
         return False
+
+def send_email_via_resend(subject, body_html, api_key):
+    print("Sending email via Resend API...")
+    resend.api_key = api_key
+    
+    sender = os.getenv("SENDER_EMAIL", "onboarding@resend.dev")
+    receiver = os.getenv("RECEIVER_EMAIL")
+    
+    params = {
+        "from": sender,
+        "to": [receiver],
+        "subject": subject,
+        "html": body_html,
+    }
+
+    try:
+        email = resend.Emails.send(params)
+        print(f"Email sent successfully via Resend! ID: {email.get('id')}")
+        return True
+    except Exception as e:
+        print(f"Failed to send email via Resend API. Error: {e}")
+        return False
+
 
 
 # Load environment variables
