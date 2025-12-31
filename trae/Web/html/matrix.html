@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Matrix</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        canvas {
+            display: block;
+        }
+        .overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #0f0;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #0f0;
+            text-decoration: none;
+            border: 1px solid #0f0;
+            padding: 5px 10px;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .back-link:hover {
+            background-color: #0f0;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <h1>SYSTEM_BREACH_DETECTED</h1>
+        <a href="../index.html" class="back-link">&lt; RETURN_TO_SOURCE</a>
+    </div>
+    <canvas id="matrix"></canvas>
+    <script src="../js/matrix.js"></script>
+</body>
+</html>

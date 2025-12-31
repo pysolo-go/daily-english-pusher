@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+canvas {
+    display: block;
+}
+
+.overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.overlay h1 {
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.overlay p {
+    margin-top: 10px;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #4facfe;
+    text-decoration: none;
+    border: 1px solid #4facfe;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.back-link:hover {
+    background: rgba(79, 172, 254, 0.2);
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
+}

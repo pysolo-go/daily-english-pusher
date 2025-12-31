@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street English Learner</title>
+    <!-- Google Fonts for Street Vibe -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Monoton&family=Pacifico&family=Permanent+Marker&family=Roboto+Condensed:wght@400;700&family=Rock+Salt&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-road"></i> StreetEng
+            </div>
+            <nav>
+                <div class="nav-item active" data-view="study">
+                    <i class="fas fa-book-open"></i> Study Zone
+                </div>
+                <div class="nav-item" data-view="review">
+                    <i class="fas fa-brain"></i> Review Zone
+                </div>
+                <div class="nav-item" data-view="completed">
+                    <i class="fas fa-check-circle"></i> Completed
+                </div>
+            </nav>
+
+            <!-- Monster Zone -->
+            <div class="monster-zone">
+                <div class="monster monster-show" id="monsterShow">
+                    <div class="body-shape"></div>
+                    <div class="eyes">
+                        <div class="eye"><div class="pupil"></div></div>
+                        <div class="eye"><div class="pupil"></div></div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+                <div class="monster monster-hide" id="monsterHide">
+                    <div class="body-shape"></div>
+                    <div class="eyes">
+                        <div class="eye"><div class="pupil"></div></div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+
+            <!-- New Sentence Transformer Zone -->
+            <div class="sentence-zone" id="sentenceZone">
+                <div class="zone-title"><i class="fas fa-magic"></i> Sentence Maker</div>
+                <div class="zone-content" id="zoneContent">
+                    <div class="placeholder-icon"><i class="fas fa-file-import"></i></div>
+                    <p class="placeholder-text">Drag a card here to make a sentence</p>
+                </div>
+                <button class="refresh-sentence-btn hidden" id="refreshSentenceBtn" title="New Sentence">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <div class="search-bar">
+                    <div class="input-wrapper">
+                        <input type="text" id="searchInput" placeholder="问 AI：'这个怎么说？' 或搜索卡片...">
+                        <button id="clearSearchBtn" class="clear-btn hidden"><i class="fas fa-times"></i></button>
+                    </div>
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <button id="shuffleBtn" class="action-btn">
+                    <i class="fas fa-random"></i> Shuffle Cards
+                </button>
+            </header>
+
+            <div id="aiResponse" class="ai-response hidden">
+                <div class="ai-header">
+                    <i class="fas fa-robot"></i> AI 助手
+                    <span class="close-ai">&times;</span>
+                </div>
+                <div class="ai-body" id="aiResponseBody">
+                    思考中...
+                </div>
+            </div>
+
+            <div class="content-area" id="app">
+                <!-- Study Zone -->
+                <div id="study-view" class="view-section active">
+                    <h2><i class="fas fa-street-view"></i> Street Discovery</h2>
+                    <div class="card-grid" id="study-grid">
+                        <!-- Cards will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Review Zone -->
+                <div id="review-view" class="view-section">
+                    <h2><i class="fas fa-layer-group"></i> Review Queue</h2>
+                    <div class="drop-zone" id="review-zone">
+                        <div class="placeholder-text">Drag cards here to review</div>
+                        <div class="card-grid" id="review-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Completed Zone -->
+                <div id="completed-view" class="view-section">
+                    <h2><i class="fas fa-trophy"></i> Mastered</h2>
+                    <div class="drop-zone" id="completed-zone">
+                        <div class="placeholder-text">Drag mastered cards here</div>
+                        <div class="card-grid" id="completed-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="spit-projectile" class="spit-projectile"></div>
+    <script src="script.js"></script>
+</body>
+</html>

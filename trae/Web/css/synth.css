@@ -1,0 +1,90 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #120024;
+    font-family: 'Courier New', Courier, monospace;
+    color: #ff00ff;
+}
+
+canvas {
+    display: block;
+}
+
+.controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(18, 0, 36, 0.8);
+    border: 2px solid #00ffff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 20px #00ffff;
+    pointer-events: none; /* Let clicks pass to canvas */
+    user-select: none;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2rem;
+    text-shadow: 2px 2px #00ffff;
+    letter-spacing: 5px;
+}
+
+p {
+    margin: 5px 0 0;
+    color: #00ffff;
+    font-size: 0.9rem;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: #ff00ff;
+    text-decoration: none;
+    border: 1px solid #ff00ff;
+    padding: 5px 10px;
+    transition: all 0.2s;
+    pointer-events: auto; /* Enable clicks */
+    background: rgba(0,0,0,0.5);
+}
+
+.back-link:hover {
+    background: #ff00ff;
+    color: #120024;
+    box-shadow: 0 0 10px #ff00ff;
+}
+
+#overlay-start {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    flex-direction: column;
+}
+
+#btn-start {
+    font-size: 2rem;
+    padding: 20px 40px;
+    background: transparent;
+    color: #00ffff;
+    border: 2px solid #00ffff;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px #00ffff;
+    transition: all 0.2s;
+}
+
+#btn-start:hover {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 40px #00ffff;
+}

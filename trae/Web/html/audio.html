@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Visualizer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .ui {
+            z-index: 10;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        h1 { margin-top: 0; text-transform: uppercase; letter-spacing: 5px; }
+        button {
+            background: transparent;
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            padding: 10px 30px;
+            font-family: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #00ff88;
+            color: #000;
+            box-shadow: 0 0 20px #00ff88;
+        }
+        .hidden { display: none; }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.5;
+            z-index: 20;
+        }
+        .back-link:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">← Back to Gallery</a>
+    
+    <div class="ui" id="start-screen">
+        <h1>Sonic Visualizer</h1>
+        <p>This experience uses your microphone to generate visuals.</p>
+        <button id="start-btn">INITIALIZE AUDIO</button>
+    </div>
+
+    <canvas id="visualizer"></canvas>
+    <script src="../js/audio.js"></script>
+</body>
+</html>

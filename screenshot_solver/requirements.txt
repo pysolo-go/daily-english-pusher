@@ -1,0 +1,7 @@
+pytesseract
+Pillow
+openai
+python-dotenv
+pyautogui
+keyboard
+rumps

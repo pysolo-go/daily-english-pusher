@@ -1,0 +1,58 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #050505;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#canvas-container {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    color: white;
+    pointer-events: none; /* Let clicks pass through to canvas if needed, but here we want links to work */
+}
+
+.overlay h1 {
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.overlay p {
+    margin-top: 10px;
+    color: #aaa;
+    font-size: 1rem;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #00ff88;
+    text-decoration: none;
+    border: 1px solid #00ff88;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    pointer-events: auto; /* Re-enable pointer events for the link */
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    background-color: #00ff88;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Typewriter</title>
+    <style>
+        body {
+            background-color: #f4f1ea; /* Paper color */
+            color: #333;
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #paper {
+            width: 80%;
+            max-width: 800px;
+            height: 80vh;
+            padding: 40px;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.5rem;
+            background-color: #333;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.9rem;
+            border-bottom: 1px dotted #888;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">Back</a>
+    <div id="paper">
+        <span id="content"></span><span class="cursor"></span>
+    </div>
+    <div class="hint">Just start typing...</div>
+    <script src="../js/typewriter.js"></script>
+</body>
+</html>
