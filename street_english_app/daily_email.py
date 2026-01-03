@@ -84,7 +84,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(BASE_DIR, "vocabulary.csv")
 PROGRESS_FILE = os.path.join(BASE_DIR, "email_progress.json")
 DEBUG_PREVIEW_FILE = os.path.join(BASE_DIR, "latest_email_preview.html")
-BATCH_SIZE = 20
+BATCH_SIZE = 15
 
 # Email Config
 SMTP_SERVER = os.getenv("SMTP_SERVER", "")
