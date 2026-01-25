@@ -1,0 +1,5 @@
+pandas
+python-dotenv
+eng_to_ipa
+resend
+openai

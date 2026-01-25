@@ -5,15 +5,16 @@
 !*/
 
 # Exception for specific files/folders we want
-!street_english_app/**
+!*.py
+!*.sh
+!*.txt
+!*.md
+!*.json
 !.github/**
-!requirements.txt
 !.gitignore
 
-# Allow email folder
-!email/**
-
-# Re-ignore things we definitely don't want inside the allowed folders
+# Re-ignore things we definitely don't want
+tweet_monitor_state.json
 __pycache__/
 *.pyc
 .DS_Store

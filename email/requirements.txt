@@ -1,0 +1,7 @@
+playwright
+schedule
+python-dotenv
+yagmail
+lxml
+resend
+
