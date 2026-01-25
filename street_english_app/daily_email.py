@@ -8,7 +8,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from dotenv import load_dotenv
-from openai import OpenAI
 try:
     import resend
 except ImportError:
@@ -97,20 +96,8 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
 
-# OpenAI Config
-# Try to determine a good model based on the base URL, or default to a safe bet
-BASE_URL = os.getenv("OPENAI_BASE_URL", "")
-if "siliconflow" in BASE_URL:
-    MODEL_NAME = "deepseek-ai/DeepSeek-V2.5" # Common good model on SiliconFlow
-elif "deepseek" in BASE_URL:
-    MODEL_NAME = "deepseek-chat"
-else:
-    MODEL_NAME = "gpt-3.5-turbo"
+# OpenAI Config removed
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url=BASE_URL
-)
 
 def load_progress():
     if os.path.exists(PROGRESS_FILE):
@@ -122,68 +109,7 @@ def save_progress(index):
     with open(PROGRESS_FILE, 'w') as f:
         json.dump({"last_index": index}, f)
 
-def generate_batch_content(batch_data):
-    """
-    Batch generate sentences and translations for a list of words.
-    batch_data: list of dicts [{'word': '...', 'meaning': '...'}, ...]
-    """
-    words_prompt = ""
-    for item in batch_data:
-        words_prompt += f"- {item['word']}: {item['meaning']}\n"
 
-    prompt = f"""
-    I will provide a list of English words with their meanings.
-    For EACH word, please create a simple English sentence using that word, and provide a Chinese translation of that sentence.
-    
-    Return the result as a valid JSON list of objects. 
-    The JSON should NOT be wrapped in markdown code blocks (no ```json).
-    
-    Input Words:
-    {words_prompt}
-    
-    Output JSON Format:
-    [
-        {{"word": "the word", "sentence": "The English sentence.", "translation": "句子的中文翻译"}}
-    ]
-    """
-    
-    try:
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=[
-                {"role": "system", "content": "You are a helpful English teacher. Respond only with valid JSON."},
-                {"role": "user", "content": prompt}
-            ],
-            response_format={"type": "json_object"} if "gpt" in MODEL_NAME or "deepseek" in MODEL_NAME else None
-        )
-        content = response.choices[0].message.content.strip()
-        
-        # Clean up potential markdown wrappers if the model ignores instruction
-        if content.startswith("```json"):
-            content = content[7:]
-        if content.endswith("```"):
-            content = content[:-3]
-        content = content.strip()
-        
-        # Handle case where result might be wrapped in a key like "words": [...]
-        try:
-            data = json.loads(content)
-            if isinstance(data, list):
-                return data
-            elif isinstance(data, dict):
-                # Try to find the list
-                for key in data:
-                    if isinstance(data[key], list):
-                        return data[key]
-                return []
-        except json.JSONDecodeError:
-            print("Failed to decode JSON from LLM response.")
-            print("Raw content:", content)
-            return []
-            
-    except Exception as e:
-        print(f"Error generating batch content: {e}")
-        return []
 
 
 
@@ -205,29 +131,7 @@ def main():
     # Get Batch
     batch = df.iloc[start_idx:end_idx]
     
-    # Prepare data for batch generation
-    batch_input = []
-    for i, row in batch.iterrows():
-        batch_input.append({
-            'word': row['word'],
-            'meaning': row['meaning'],
-            'pos': row['pos'],
-            'index': i
-        })
-    
-    print(f"Processing words {start_idx+1} to {min(end_idx, len(df))} using model {MODEL_NAME}...")
-    
-    # 1. Generate Text Content in Batch
-    print("Generating sentences and translations (Batch)...")
-    generated_results = generate_batch_content(batch_input)
-    
-    # Create a lookup dictionary for generated results (normalize keys to lowercase for matching)
-    results_map = {}
-    for item in generated_results:
-        if 'word' in item:
-            results_map[item['word'].lower()] = item
-            
-    # 2. Assemble Email Content
+    # Assemble Email Content
     print("Assembling email content...")
     email_content = []
     
@@ -236,23 +140,10 @@ def main():
         meaning = row['meaning']
         pos = row['pos']
         
-        # Retrieve generated data
-        gen_data = results_map.get(word.lower(), {})
-        sentence = gen_data.get('sentence', "Sentence generation failed.")
-        translation = gen_data.get('translation', "Translation generation failed.")
-        
-        # Bold the word in the sentence
-        if sentence:
-            sentence_html = re.sub(f"({re.escape(word)})", r"<b>\1</b>", sentence, flags=re.IGNORECASE)
-        else:
-            sentence_html = ""
-
         item_html = f"""
         <div style="margin-bottom: 20px; font-family: sans-serif;">
             <div style="font-size: 18px; font-weight: bold; color: #2c3e50;">{i+1}. {word}</div>
             <div style="color: #7f8c8d; font-size: 14px; margin-bottom: 4px;">{pos} {meaning}</div>
-            <div style="font-size: 16px; margin-bottom: 4px;">{sentence_html}</div>
-            <div style="color: #95a5a6; font-size: 14px;">{translation}</div>
         </div>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         """
