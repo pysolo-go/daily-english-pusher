@@ -204,6 +204,9 @@ def main():
     else:
         print("Email sending skipped or failed. Progress NOT updated.")
         print(f"You can view the generated content in: {DEBUG_PREVIEW_FILE}")
+        # Exit with error code so GitHub Actions knows it failed
+        import sys
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
