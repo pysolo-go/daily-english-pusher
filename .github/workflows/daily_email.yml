@@ -47,5 +47,15 @@ jobs:
       run: |
         git config --global user.name "GitHub Action"
         git config --global user.email "action@github.com"
+        
+        # Add only the progress file
         git add street_english_app/email_progress.json
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Update email progress" && git push)
+        
+        # Check if it is staged (modified)
+        if ! git diff --staged --quiet; then
+          echo "Progress updated, committing..."
+          git commit -m "Update email progress"
+          git push
+        else
+          echo "No progress changes to commit."
+        fi
