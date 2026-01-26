@@ -82,7 +82,11 @@ def send_email_via_resend(subject, body_html, api_key):
 
 
 # Load environment variables
-load_dotenv("/Users/solo/Desktop/work/trae.ai/ai/.env", override=True)
+# Try to load from project root .env if it exists (for local development)
+# In GitHub Actions, variables are injected directly via env context, so .env is not needed.
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env_path = os.path.join(project_root, ".env")
+load_dotenv(env_path, override=True)
 
 # Configuration
 # Use relative paths for portability (GitHub Actions vs Local)
