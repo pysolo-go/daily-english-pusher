@@ -9,6 +9,8 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from dotenv import load_dotenv
 import eng_to_ipa as ipa
+from openai import OpenAI
+
 try:
     import resend
 except ImportError:
@@ -94,7 +96,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(BASE_DIR, "vocabulary.csv")
 PROGRESS_FILE = os.path.join(BASE_DIR, "email_progress.json")
 DEBUG_PREVIEW_FILE = os.path.join(BASE_DIR, "latest_email_preview.html")
-BATCH_SIZE = 70
+BATCH_SIZE = 30  # Changed to 30 as requested
 
 # Email Config
 SMTP_SERVER = os.getenv("SMTP_SERVER", "")
@@ -107,8 +109,9 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
 
-# OpenAI Config removed
-
+# OpenAI Config
+API_KEY = os.getenv("OPENAI_API_KEY")
+BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 
 def load_progress():
     if os.path.exists(PROGRESS_FILE):
@@ -120,10 +123,55 @@ def save_progress(index):
     with open(PROGRESS_FILE, 'w') as f:
         json.dump({"last_index": index}, f)
 
+def generate_phrases(words_list):
+    if not API_KEY:
+        print("Warning: OPENAI_API_KEY not found. Skipping phrase generation.")
+        return []
 
+    client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
+    prompt = f"""
+    I have a list of {len(words_list)} English words. 
+    I need you to generate EXACTLY 6 short, natural English phrases or sentences.
+    Together, these 6 phrases MUST include as many of the provided words as possible. 
+    Each phrase should be followed by its Chinese translation.
+    
+    Words: {', '.join(words_list)}
+    
+    Please output a JSON array of objects, where each object has:
+    - "english": The English phrase/sentence
+    - "chinese": The Chinese translation
+    
+    Output ONLY the JSON array.
+    """
 
+    try:
+        response = client.chat.completions.create(
+            model="deepseek-ai/DeepSeek-V3",
+            messages=[
+                {"role": "system", "content": "You are a helpful English teacher."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            response_format={"type": "json_object"}
+        )
+        
+        content = response.choices[0].message.content
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0]
+        elif "```" in content:
+             content = content.split("```")[1].split("```")[0]
+             
+        data = json.loads(content)
+        if isinstance(data, dict):
+            for key in data:
+                if isinstance(data[key], list):
+                    return data[key]
+            return []
+        return data
 
-
+    except Exception as e:
+        print(f"Error generating phrases: {e}")
+        return []
 
 def main():
     # Load Data
@@ -146,8 +194,11 @@ def main():
     print("Assembling email content...")
     email_content = []
     
+    words_for_phrases = []
+
     for i, row in batch.iterrows():
         word = row['word']
+        words_for_phrases.append(word)
         meaning = row['meaning']
         pos = row['pos']
         sentence = row.get('sentence', '')
@@ -161,8 +212,6 @@ def main():
         # Generate phonetic transcription
         try:
             phonetic = ipa.convert(word)
-            # eng_to_ipa returns the word itself with * if it can't find it, or sometimes multiple pronunciations
-            # We can clean it up if needed, but usually it's fine.
         except:
             phonetic = ""
         
@@ -179,12 +228,29 @@ def main():
         """
         email_content.append(item_html)
 
+    # Generate 6 phrases
+    print("Generating phrases...")
+    phrases = generate_phrases(words_for_phrases)
+    phrases_html = ""
+    if phrases:
+        phrases_html = """
+        <div style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; font-family: sans-serif;">
+            <h3 style="color: #2c3e50; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 10px;">Context Phrases</h3>
+            <ul style="padding-left: 20px; color: #34495e; font-size: 15px; line-height: 1.8;">
+        """
+        for p in phrases:
+            eng = p.get('english', '')
+            chi = p.get('chinese', '')
+            phrases_html += f'<li style="margin-bottom: 10px;"><strong>{eng}</strong><br><span style="color: #7f8c8d; font-size: 14px;">{chi}</span></li>'
+        phrases_html += "</ul></div>"
+
     # Final Email Body
     full_body = f"""
     <html>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">IELTS Daily Vocabulary ({start_idx+1}-{min(end_idx, len(df))})</h2>
         {''.join(email_content)}
+        {phrases_html}
         <p style="font-size: 12px; color: #999; margin-top: 30px; text-align: center;">
             Generated by Trae AI Street English App<br>
         </p>
