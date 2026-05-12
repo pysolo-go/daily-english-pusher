@@ -131,17 +131,19 @@ def generate_phrases(words_list):
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
     prompt = f"""
     I have a list of {len(words_list)} English words. 
-    I need you to generate EXACTLY 6 short, natural English phrases or sentences.
-    Together, these 6 phrases MUST include as many of the provided words as possible. 
+    I need you to generate EXACTLY 10 short, natural English phrases or sentences.
+    Together, these 10 phrases MUST include as many of the provided words as possible. 
     Each phrase should be followed by its Chinese translation.
     
     Words: {', '.join(words_list)}
     
-    Please output a JSON array of objects, where each object has:
+    Please output a valid JSON object containing a single key "phrases".
+    The value of "phrases" must be an array of 10 objects.
+    Each object must have:
     - "english": The English phrase/sentence
     - "chinese": The Chinese translation
     
-    Output ONLY the JSON array.
+    Output ONLY the JSON object, nothing else. No markdown formatting.
     """
 
     try:
@@ -156,11 +158,25 @@ def generate_phrases(words_list):
         )
         
         content = response.choices[0].message.content
-        if "```json" in content:
-            content = content.split("```json")[1].split("```")[0]
-        elif "```" in content:
-             content = content.split("```")[1].split("```")[0]
-             
+        print("Raw OpenAI response:", content)
+        
+        import re
+        # Try to fix `{ { ... } }` invalid JSON to `[ { ... } ]`
+        content = content.strip()
+        if content.startswith('{{') and content.endswith('}}'):
+            content = '[' + content[1:-1] + ']'
+        elif content.startswith('{') and content.endswith('}') and 'english' in content and 'chinese' in content:
+            # Check if it's `{ "english": ..., "chinese": ... }` -> `[{...}]`
+            # Or if it's `{ {...}, {...} }`
+            if re.search(r'\{\s*\{', content):
+                content = '[' + content[1:-1] + ']'
+
+        # Extract JSON array using regex
+        import re
+        match = re.search(r'\[.*\]', content, re.DOTALL)
+        if match:
+            content = match.group(0)
+            
         data = json.loads(content)
         if isinstance(data, dict):
             for key in data:
@@ -228,7 +244,7 @@ def main():
         """
         email_content.append(item_html)
 
-    # Generate 6 phrases
+    # Generate 10 phrases
     print("Generating phrases...")
     phrases = generate_phrases(words_for_phrases)
     phrases_html = ""
